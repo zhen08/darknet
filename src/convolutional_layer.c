@@ -135,7 +135,11 @@ void cudnn_convolutional_setup(layer *l)
     cudnnSetTensor4dDescriptor(l->dstTensorDesc, CUDNN_TENSOR_NCHW, CUDNN_DATA_FLOAT, l->batch, l->out_c, l->out_h, l->out_w); 
     cudnnSetTensor4dDescriptor(l->normTensorDesc, CUDNN_TENSOR_NCHW, CUDNN_DATA_FLOAT, 1, l->out_c, 1, 1); 
     cudnnSetFilter4dDescriptor(l->weightDesc, CUDNN_DATA_FLOAT, CUDNN_TENSOR_NCHW, l->n, l->c, l->size, l->size); 
+    #if CUDNN_MAJOR >= 6
+    cudnnSetConvolution2dDescriptor(l->convDesc, l->pad, l->pad, l->stride, l->stride, 1, 1, CUDNN_CROSS_CORRELATION, CUDNN_DATA_FLOAT);
+    #else
     cudnnSetConvolution2dDescriptor(l->convDesc, l->pad, l->pad, l->stride, l->stride, 1, 1, CUDNN_CROSS_CORRELATION);
+    #endif
     cudnnGetConvolutionForwardAlgorithm(cudnn_handle(),
             l->srcTensorDesc,
             l->weightDesc,
@@ -351,9 +355,6 @@ void resize_convolutional_layer(convolutional_layer *l, int w, int h)
     int out_w = convolutional_out_width(*l);
     int out_h = convolutional_out_height(*l);
 
-#if 1
-    printf("resize_convolutional_layer: out_w, out_h = [%d, %d], new out_w, out_h [%d, %d], batch, outputs [%d, %d] \n", l->out_w, l->out_h, out_w, out_h, l->batch, l->outputs);
-#endif
     l->out_w = out_w;
     l->out_h = out_h;
 

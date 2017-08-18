@@ -13,6 +13,7 @@ int gpu_index = 0;
 
 void cuda_set_device(int n)
 {
+    printf("cuda_set_device %d\n",n);
     gpu_index = n;
     cudaError_t status = cudaSetDevice(n);
     check_error(status);
@@ -189,7 +190,7 @@ static unsigned long long cuda_make_array_size_int = 0;
 #endif
 float *cuda_make_array(float *x, size_t n)
 {
-    float *x_gpu;
+   float *x_gpu;
     size_t size = sizeof(float)*n;
 #ifdef _ENABLE_CUDA_MEM_DEBUG  
     printf("CUDA alloc/free cnts/size/reqsize = [%d], [%d], [%llu], [%lu]\n", cuda_make_array_cnt, cuda_free_cnt, cuda_make_array_size_float, n ); 
