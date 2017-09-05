@@ -13,7 +13,6 @@ int gpu_index = 0;
 
 void cuda_set_device(int n)
 {
-    printf("cuda_set_device %d\n",n);
     gpu_index = n;
     cudaError_t status = cudaSetDevice(n);
     check_error(status);
